@@ -1,0 +1,32 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+voltage                                                                           0x0200       4
+temp                                                                              0x0204       4
+buff                                                                              0x0208      20
+buff1                                                                             0x021C      20
+_seed                                                                             0x0230       4
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+ADC                                                                               R4,R5        2
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+main                                                                              0x0008C    135
+putchar                                                                           0x00113      7
+put_usart_G100                                                                    0x0011A     13
+_print_G100                                                                       0x00127    308
+printf                                                                            0x0025B     37
+ftoa                                                                              0x00280    201
+strcpyf                                                                           0x00349     13
+strlen                                                                            0x00356     12
+strlenf                                                                           0x00362     13
+ftrunc                                                                            0x0036F     49
+floor                                                                             0x003A0     23
