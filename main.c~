@@ -5,11 +5,11 @@ Automatic Program Generator
 © Copyright 1998-2014 Pavel Haiduc, HP InfoTech s.r.l.
 http://www.hpinfotech.com
 
-Project : 
+Project : ATmega External ADC
 Version : 
 Date    : 28/11/2019
-Author  : 
-Company : 
+Author  : Rama Setyawan
+Company : PENS
 Comments: 
 
 
@@ -26,12 +26,19 @@ Data Stack size         : 256
 #include <stdlib.h>
 #include <delay.h>
 #include <string.h>
+#include <math.h>
 
 // Declare your global variables here
 int ADC;
 float voltage;
 long temp;
 char buff[20],buff1[20];
+
+long RL = 1000; // 1000 Ohm
+long Ro = 830; // 830 ohm ( SILAHKAN DISESUAIKAN)
+
+float Rs;
+float ppm;
 
 #define DATA_REGISTER_EMPTY (1<<UDRE0)
 #define RX_COMPLETE (1<<RXC0)
@@ -137,8 +144,11 @@ while (1)
       voltage = PINA * (5.0/255.0);
       ADC = PINA;
       temp = (((int)5 * ADC * 0.3921));
-      ftoa(voltage,3,buff);
+      ftoa(voltage,1,buff);
       ftoa(temp,1,buff1);  
-      printf("ADC : %d || V : %s || Temp : %s C\n",ADC,buff,buff1);
+      //printf("ADC : %d || V : %s || Temp : %s C\n",ADC,buff,buff1);
+      printf("%s %d \r",buff1,100);
+      
+      delay_ms(100);
       }
 }

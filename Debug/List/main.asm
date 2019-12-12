@@ -1132,12 +1132,12 @@ _tbl10_G100:
 _tbl16_G100:
 	.DB  0x0,0x10,0x0,0x1,0x10,0x0,0x1,0x0
 
+_0x3:
+	.DB  0xE8,0x3
+_0x4:
+	.DB  0x3E,0x3
 _0x0:
-	.DB  0x41,0x44,0x43,0x20,0x3A,0x20,0x25,0x64
-	.DB  0x20,0x7C,0x7C,0x20,0x56,0x20,0x3A,0x20
-	.DB  0x25,0x73,0x20,0x7C,0x7C,0x20,0x54,0x65
-	.DB  0x6D,0x70,0x20,0x3A,0x20,0x25,0x73,0x20
-	.DB  0x43,0xA,0x0
+	.DB  0x25,0x73,0x20,0x25,0x64,0xD,0x0
 _0x2020060:
 	.DB  0x1
 _0x2020000:
@@ -1235,11 +1235,11 @@ __GLOBAL_INI_END:
 ;© Copyright 1998-2014 Pavel Haiduc, HP InfoTech s.r.l.
 ;http://www.hpinfotech.com
 ;
-;Project :
+;Project : ATmega External ADC
 ;Version :
 ;Date    : 28/11/2019
-;Author  :
-;Company :
+;Author  : Rama Setyawan
+;Company : PENS
 ;Comments:
 ;
 ;
@@ -1261,12 +1261,21 @@ __GLOBAL_INI_END:
 ;#include <stdlib.h>
 ;#include <delay.h>
 ;#include <string.h>
+;#include <math.h>
 ;
 ;// Declare your global variables here
 ;int ADC;
 ;float voltage;
 ;long temp;
 ;char buff[20],buff1[20];
+;
+;long RL = 1000; // 1000 Ohm
+
+	.DSEG
+;long Ro = 830; // 830 ohm ( SILAHKAN DISESUAIKAN)
+;
+;float Rs;
+;float ppm;
 ;
 ;#define DATA_REGISTER_EMPTY (1<<UDRE0)
 ;#define RX_COMPLETE (1<<RXC0)
@@ -1277,140 +1286,140 @@ __GLOBAL_INI_END:
 ;// Get a character from the USART1 Receiver
 ;#pragma used+
 ;char getchar1(void)
-; 0000 002D {
+; 0000 0034 {
 
 	.CSEG
-; 0000 002E char status,data;
-; 0000 002F while (1)
+; 0000 0035 char status,data;
+; 0000 0036 while (1)
 ;	status -> R17
 ;	data -> R16
-; 0000 0030       {
-; 0000 0031       while (((status=UCSR1A) & RX_COMPLETE)==0);
-; 0000 0032       data=UDR1;
-; 0000 0033       if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN))==0)
-; 0000 0034          return data;
-; 0000 0035       }
-; 0000 0036 }
+; 0000 0037       {
+; 0000 0038       while (((status=UCSR1A) & RX_COMPLETE)==0);
+; 0000 0039       data=UDR1;
+; 0000 003A       if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN))==0)
+; 0000 003B          return data;
+; 0000 003C       }
+; 0000 003D }
 ;#pragma used-
 ;
 ;// Write a character to the USART1 Transmitter
 ;#pragma used+
 ;void putchar1(char c)
-; 0000 003C {
-; 0000 003D while ((UCSR1A & DATA_REGISTER_EMPTY)==0);
+; 0000 0043 {
+; 0000 0044 while ((UCSR1A & DATA_REGISTER_EMPTY)==0);
 ;	c -> Y+0
-; 0000 003E UDR1=c;
-; 0000 003F }
+; 0000 0045 UDR1=c;
+; 0000 0046 }
 ;#pragma used-
 ;
 ;void main(void)
-; 0000 0043 {
+; 0000 004A {
 _main:
 ; .FSTART _main
-; 0000 0044 // Declare your local variables here
-; 0000 0045 
-; 0000 0046 // Crystal Oscillator division factor: 1
-; 0000 0047 #pragma optsize-
-; 0000 0048 CLKPR=(1<<CLKPCE);
+; 0000 004B // Declare your local variables here
+; 0000 004C 
+; 0000 004D // Crystal Oscillator division factor: 1
+; 0000 004E #pragma optsize-
+; 0000 004F CLKPR=(1<<CLKPCE);
 	LDI  R30,LOW(128)
 	STS  97,R30
-; 0000 0049 CLKPR=(0<<CLKPCE) | (0<<CLKPS3) | (0<<CLKPS2) | (0<<CLKPS1) | (0<<CLKPS0);
+; 0000 0050 CLKPR=(0<<CLKPCE) | (0<<CLKPS3) | (0<<CLKPS2) | (0<<CLKPS1) | (0<<CLKPS0);
 	LDI  R30,LOW(0)
 	STS  97,R30
-; 0000 004A #ifdef _OPTIMIZE_SIZE_
-; 0000 004B #pragma optsize+
-; 0000 004C #endif
-; 0000 004D 
-; 0000 004E // Input/Output Ports initialization
-; 0000 004F // Port A initialization
-; 0000 0050 // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
-; 0000 0051 DDRA=(0<<DDA7) | (0<<DDA6) | (0<<DDA5) | (0<<DDA4) | (0<<DDA3) | (0<<DDA2) | (0<<DDA1) | (0<<DDA0);
-	OUT  0x1A,R30
-; 0000 0052 // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
-; 0000 0053 PORTA=(0<<PORTA7) | (0<<PORTA6) | (0<<PORTA5) | (0<<PORTA4) | (0<<PORTA3) | (0<<PORTA2) | (0<<PORTA1) | (0<<PORTA0);
-	OUT  0x1B,R30
+; 0000 0051 #ifdef _OPTIMIZE_SIZE_
+; 0000 0052 #pragma optsize+
+; 0000 0053 #endif
 ; 0000 0054 
-; 0000 0055 // Port B initialization
-; 0000 0056 // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
-; 0000 0057 DDRB=(0<<DDB7) | (0<<DDB6) | (0<<DDB5) | (0<<DDB4) | (0<<DDB3) | (0<<DDB2) | (0<<DDB1) | (0<<DDB0);
+; 0000 0055 // Input/Output Ports initialization
+; 0000 0056 // Port A initialization
+; 0000 0057 // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
+; 0000 0058 DDRA=(0<<DDA7) | (0<<DDA6) | (0<<DDA5) | (0<<DDA4) | (0<<DDA3) | (0<<DDA2) | (0<<DDA1) | (0<<DDA0);
+	OUT  0x1A,R30
+; 0000 0059 // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
+; 0000 005A PORTA=(0<<PORTA7) | (0<<PORTA6) | (0<<PORTA5) | (0<<PORTA4) | (0<<PORTA3) | (0<<PORTA2) | (0<<PORTA1) | (0<<PORTA0);
+	OUT  0x1B,R30
+; 0000 005B 
+; 0000 005C // Port B initialization
+; 0000 005D // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
+; 0000 005E DDRB=(0<<DDB7) | (0<<DDB6) | (0<<DDB5) | (0<<DDB4) | (0<<DDB3) | (0<<DDB2) | (0<<DDB1) | (0<<DDB0);
 	OUT  0x17,R30
-; 0000 0058 // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
-; 0000 0059 PORTB=(0<<PORTB7) | (0<<PORTB6) | (0<<PORTB5) | (0<<PORTB4) | (0<<PORTB3) | (0<<PORTB2) | (0<<PORTB1) | (0<<PORTB0);
+; 0000 005F // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
+; 0000 0060 PORTB=(0<<PORTB7) | (0<<PORTB6) | (0<<PORTB5) | (0<<PORTB4) | (0<<PORTB3) | (0<<PORTB2) | (0<<PORTB1) | (0<<PORTB0);
 	OUT  0x18,R30
-; 0000 005A 
-; 0000 005B // Port C initialization
-; 0000 005C // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
-; 0000 005D DDRC=(0<<DDC7) | (0<<DDC6) | (0<<DDC5) | (0<<DDC4) | (0<<DDC3) | (0<<DDC2) | (0<<DDC1) | (0<<DDC0);
+; 0000 0061 
+; 0000 0062 // Port C initialization
+; 0000 0063 // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
+; 0000 0064 DDRC=(0<<DDC7) | (0<<DDC6) | (0<<DDC5) | (0<<DDC4) | (0<<DDC3) | (0<<DDC2) | (0<<DDC1) | (0<<DDC0);
 	OUT  0x14,R30
-; 0000 005E // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
-; 0000 005F PORTC=(0<<PORTC7) | (0<<PORTC6) | (0<<PORTC5) | (0<<PORTC4) | (0<<PORTC3) | (0<<PORTC2) | (0<<PORTC1) | (0<<PORTC0);
+; 0000 0065 // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
+; 0000 0066 PORTC=(0<<PORTC7) | (0<<PORTC6) | (0<<PORTC5) | (0<<PORTC4) | (0<<PORTC3) | (0<<PORTC2) | (0<<PORTC1) | (0<<PORTC0);
 	OUT  0x15,R30
-; 0000 0060 
-; 0000 0061 // Port D initialization
-; 0000 0062 // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
-; 0000 0063 DDRD=(0<<DDD7) | (0<<DDD6) | (0<<DDD5) | (0<<DDD4) | (0<<DDD3) | (0<<DDD2) | (0<<DDD1) | (0<<DDD0);
+; 0000 0067 
+; 0000 0068 // Port D initialization
+; 0000 0069 // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
+; 0000 006A DDRD=(0<<DDD7) | (0<<DDD6) | (0<<DDD5) | (0<<DDD4) | (0<<DDD3) | (0<<DDD2) | (0<<DDD1) | (0<<DDD0);
 	OUT  0x11,R30
-; 0000 0064 // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
-; 0000 0065 PORTD=(0<<PORTD7) | (0<<PORTD6) | (0<<PORTD5) | (0<<PORTD4) | (0<<PORTD3) | (0<<PORTD2) | (0<<PORTD1) | (0<<PORTD0);
+; 0000 006B // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
+; 0000 006C PORTD=(0<<PORTD7) | (0<<PORTD6) | (0<<PORTD5) | (0<<PORTD4) | (0<<PORTD3) | (0<<PORTD2) | (0<<PORTD1) | (0<<PORTD0);
 	OUT  0x12,R30
-; 0000 0066 
-; 0000 0067 // Port E initialization
-; 0000 0068 // Function: Bit2=In Bit1=In Bit0=In
-; 0000 0069 DDRE=(0<<DDE2) | (0<<DDE1) | (0<<DDE0);
+; 0000 006D 
+; 0000 006E // Port E initialization
+; 0000 006F // Function: Bit2=In Bit1=In Bit0=In
+; 0000 0070 DDRE=(0<<DDE2) | (0<<DDE1) | (0<<DDE0);
 	OUT  0x6,R30
-; 0000 006A // State: Bit2=T Bit1=T Bit0=T
-; 0000 006B PORTE=(0<<PORTE2) | (0<<PORTE1) | (0<<PORTE0);
+; 0000 0071 // State: Bit2=T Bit1=T Bit0=T
+; 0000 0072 PORTE=(0<<PORTE2) | (0<<PORTE1) | (0<<PORTE0);
 	OUT  0x7,R30
-; 0000 006C 
-; 0000 006D // USART0 initialization
-; 0000 006E // Communication Parameters: 8 Data, 1 Stop, No Parity
-; 0000 006F // USART0 Receiver: Off
-; 0000 0070 // USART0 Transmitter: On
-; 0000 0071 // USART0 Mode: Asynchronous
-; 0000 0072 // USART0 Baud Rate: 9600
-; 0000 0073 UCSR0A=(0<<RXC0) | (0<<TXC0) | (0<<UDRE0) | (0<<FE0) | (0<<DOR0) | (0<<UPE0) | (0<<U2X0) | (0<<MPCM0);
+; 0000 0073 
+; 0000 0074 // USART0 initialization
+; 0000 0075 // Communication Parameters: 8 Data, 1 Stop, No Parity
+; 0000 0076 // USART0 Receiver: Off
+; 0000 0077 // USART0 Transmitter: On
+; 0000 0078 // USART0 Mode: Asynchronous
+; 0000 0079 // USART0 Baud Rate: 9600
+; 0000 007A UCSR0A=(0<<RXC0) | (0<<TXC0) | (0<<UDRE0) | (0<<FE0) | (0<<DOR0) | (0<<UPE0) | (0<<U2X0) | (0<<MPCM0);
 	OUT  0xB,R30
-; 0000 0074 UCSR0B=(0<<RXCIE0) | (0<<TXCIE0) | (0<<UDRIE0) | (0<<RXEN0) | (1<<TXEN0) | (0<<UCSZ02) | (0<<RXB80) | (0<<TXB80);
+; 0000 007B UCSR0B=(0<<RXCIE0) | (0<<TXCIE0) | (0<<UDRIE0) | (0<<RXEN0) | (1<<TXEN0) | (0<<UCSZ02) | (0<<RXB80) | (0<<TXB80);
 	LDI  R30,LOW(8)
 	OUT  0xA,R30
-; 0000 0075 UCSR0C=(0<<UMSEL0) | (0<<UPM01) | (0<<UPM00) | (0<<USBS0) | (1<<UCSZ01) | (1<<UCSZ00) | (0<<UCPOL0);
+; 0000 007C UCSR0C=(0<<UMSEL0) | (0<<UPM01) | (0<<UPM00) | (0<<USBS0) | (1<<UCSZ01) | (1<<UCSZ00) | (0<<UCPOL0);
 	LDI  R30,LOW(6)
 	OUT  0x20,R30
-; 0000 0076 UBRR0H=0x00;
+; 0000 007D UBRR0H=0x00;
 	LDI  R30,LOW(0)
 	OUT  0x20,R30
-; 0000 0077 UBRR0L=0x4D;
+; 0000 007E UBRR0L=0x4D;
 	LDI  R30,LOW(77)
 	OUT  0x9,R30
-; 0000 0078 
-; 0000 0079 // USART1 initialization
-; 0000 007A // Communication Parameters: 8 Data, 1 Stop, No Parity
-; 0000 007B // USART1 Receiver: On
-; 0000 007C // USART1 Transmitter: On
-; 0000 007D // USART1 Mode: Asynchronous
-; 0000 007E // USART1 Baud Rate: 9600
-; 0000 007F UCSR1A=(0<<RXC1) | (0<<TXC1) | (0<<UDRE1) | (0<<FE1) | (0<<DOR1) | (0<<UPE1) | (0<<U2X1) | (0<<MPCM1);
+; 0000 007F 
+; 0000 0080 // USART1 initialization
+; 0000 0081 // Communication Parameters: 8 Data, 1 Stop, No Parity
+; 0000 0082 // USART1 Receiver: On
+; 0000 0083 // USART1 Transmitter: On
+; 0000 0084 // USART1 Mode: Asynchronous
+; 0000 0085 // USART1 Baud Rate: 9600
+; 0000 0086 UCSR1A=(0<<RXC1) | (0<<TXC1) | (0<<UDRE1) | (0<<FE1) | (0<<DOR1) | (0<<UPE1) | (0<<U2X1) | (0<<MPCM1);
 	LDI  R30,LOW(0)
 	OUT  0x2,R30
-; 0000 0080 UCSR1B=(0<<RXCIE1) | (0<<TXCIE1) | (0<<UDRIE1) | (1<<RXEN1) | (1<<TXEN1) | (0<<UCSZ12) | (0<<RXB81) | (0<<TXB81);
+; 0000 0087 UCSR1B=(0<<RXCIE1) | (0<<TXCIE1) | (0<<UDRIE1) | (1<<RXEN1) | (1<<TXEN1) | (0<<UCSZ12) | (0<<RXB81) | (0<<TXB81);
 	LDI  R30,LOW(24)
 	OUT  0x1,R30
-; 0000 0081 UCSR1C=(0<<UMSEL1) | (0<<UPM11) | (0<<UPM10) | (0<<USBS1) | (1<<UCSZ11) | (1<<UCSZ10) | (0<<UCPOL1);
+; 0000 0088 UCSR1C=(0<<UMSEL1) | (0<<UPM11) | (0<<UPM10) | (0<<USBS1) | (1<<UCSZ11) | (1<<UCSZ10) | (0<<UCPOL1);
 	LDI  R30,LOW(6)
 	OUT  0x3C,R30
-; 0000 0082 UBRR1H=0x00;
+; 0000 0089 UBRR1H=0x00;
 	LDI  R30,LOW(0)
 	OUT  0x3C,R30
-; 0000 0083 UBRR1L=0x4D;
+; 0000 008A UBRR1L=0x4D;
 	LDI  R30,LOW(77)
 	OUT  0x0,R30
-; 0000 0084 
-; 0000 0085 while (1)
-_0xD:
-; 0000 0086       {
-; 0000 0087       // Place your code here
-; 0000 0088 
-; 0000 0089       voltage = PINA * (5.0/255.0);
+; 0000 008B 
+; 0000 008C while (1)
+_0xF:
+; 0000 008D       {
+; 0000 008E       // Place your code here
+; 0000 008F 
+; 0000 0090       voltage = PINA * (5.0/255.0);
 	IN   R30,0x19
 	LDI  R31,0
 	CALL SUBOPT_0x0
@@ -1420,10 +1429,10 @@ _0xD:
 	STS  _voltage+1,R31
 	STS  _voltage+2,R22
 	STS  _voltage+3,R23
-; 0000 008A       ADC = PINA;
+; 0000 0091       ADC = PINA;
 	IN   R4,25
 	CLR  R5
-; 0000 008B       temp = (((int)5 * ADC * 0.3921));
+; 0000 0092       temp = (((int)5 * ADC * 0.3921));
 	MOVW R30,R4
 	LDI  R26,LOW(5)
 	LDI  R27,HIGH(5)
@@ -1435,18 +1444,18 @@ _0xD:
 	LDI  R27,HIGH(_temp)
 	CALL __CFD1
 	CALL __PUTDP1
-; 0000 008C       ftoa(voltage,3,buff);
+; 0000 0093       ftoa(voltage,1,buff);
 	LDS  R30,_voltage
 	LDS  R31,_voltage+1
 	LDS  R22,_voltage+2
 	LDS  R23,_voltage+3
 	CALL __PUTPARD1
-	LDI  R30,LOW(3)
+	LDI  R30,LOW(1)
 	ST   -Y,R30
 	LDI  R26,LOW(_buff)
 	LDI  R27,HIGH(_buff)
 	CALL _ftoa
-; 0000 008D       ftoa(temp,1,buff1);
+; 0000 0094       ftoa(temp,1,buff1);
 	LDS  R30,_temp
 	LDS  R31,_temp+1
 	LDS  R22,_temp+2
@@ -1458,32 +1467,32 @@ _0xD:
 	LDI  R26,LOW(_buff1)
 	LDI  R27,HIGH(_buff1)
 	CALL _ftoa
-; 0000 008E       printf("ADC : %d || V : %s || Temp : %s C\n",ADC,buff,buff1);
+; 0000 0095       //printf("ADC : %d || V : %s || Temp : %s C\n",ADC,buff,buff1);
+; 0000 0096       printf("%s %d\r",buff1,100);
 	__POINTW1FN _0x0,0
 	ST   -Y,R31
 	ST   -Y,R30
-	MOVW R30,R4
-	CALL __CWD1
-	CALL __PUTPARD1
-	LDI  R30,LOW(_buff)
-	LDI  R31,HIGH(_buff)
-	CLR  R22
-	CLR  R23
-	CALL __PUTPARD1
 	LDI  R30,LOW(_buff1)
 	LDI  R31,HIGH(_buff1)
 	CLR  R22
 	CLR  R23
 	CALL __PUTPARD1
-	LDI  R24,12
+	__GETD1N 0x64
+	CALL __PUTPARD1
+	LDI  R24,8
 	RCALL _printf
-	ADIW R28,14
-; 0000 008F       }
-	RJMP _0xD
-; 0000 0090 }
-_0x10:
+	ADIW R28,10
+; 0000 0097 
+; 0000 0098       delay_ms(100);
+	LDI  R26,LOW(100)
+	LDI  R27,0
+	CALL _delay_ms
+; 0000 0099       }
+	RJMP _0xF
+; 0000 009A }
+_0x12:
 	NOP
-	RJMP _0x10
+	RJMP _0x12
 ; .FEND
 	#ifndef __SLEEP_DEFINED__
 	#define __SLEEP_DEFINED__
@@ -2139,8 +2148,6 @@ strlenf1:
 ; .FEND
 
 	.CSEG
-
-	.CSEG
 _ftrunc:
 ; .FSTART _ftrunc
 	CALL __PUTPARD2
@@ -2215,6 +2222,8 @@ _0x20A0001:
 	ADIW R28,4
 	RET
 ; .FEND
+
+	.CSEG
 
 	.DSEG
 _voltage:
@@ -2349,6 +2358,17 @@ SUBOPT_0xF:
 
 
 	.CSEG
+_delay_ms:
+	adiw r26,0
+	breq __delay_ms1
+__delay_ms0:
+	__DELAY_USW 0xBB8
+	wdr
+	sbiw r26,1
+	brne __delay_ms0
+__delay_ms1:
+	ret
+
 __ANEGF1:
 	SBIW R30,0
 	SBCI R22,0

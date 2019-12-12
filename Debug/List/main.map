@@ -19,14 +19,14 @@ ADC                                                                             
 FLASH Allocation [words]
 Function                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
-main                                                                              0x0008C    135
-putchar                                                                           0x00113      7
-put_usart_G100                                                                    0x0011A     13
-_print_G100                                                                       0x00127    308
-printf                                                                            0x0025B     37
-ftoa                                                                              0x00280    201
-strcpyf                                                                           0x00349     13
-strlen                                                                            0x00356     12
-strlenf                                                                           0x00362     13
-ftrunc                                                                            0x0036F     49
-floor                                                                             0x003A0     23
+main                                                                              0x00080    134
+putchar                                                                           0x00106      7
+put_usart_G100                                                                    0x0010D     13
+_print_G100                                                                       0x0011A    308
+printf                                                                            0x0024E     37
+ftoa                                                                              0x00273    201
+strcpyf                                                                           0x0033C     13
+strlen                                                                            0x00349     12
+strlenf                                                                           0x00355     13
+ftrunc                                                                            0x00362     49
+floor                                                                             0x00393     23

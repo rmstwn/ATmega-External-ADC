@@ -27,7 +27,7 @@ Active0=0
 EditorPanel0=0
 PageIndex0=0
 EditorPanel1=0
-TimeStamp1=1333548206
+TimeStamp1=1334404567
 PageIndex1=1
 OF2=C:\cvavr\inc\stdio.h
 Active2=0
@@ -132,8 +132,8 @@ WatchAVR8LAutoVariables=0
 UseEEPROMLocation0=1
 RebuildAll=0
 LinkageInformationPresent=1
-COFFileTimeStamp=1333547676
-Build=76
+COFFileTimeStamp=1334594600
+Build=131
 [DefinedSymbolsDebug]
 Count=0
 [Compiler]
@@ -235,7 +235,7 @@ UseEEPROMLocation0=1
 RebuildAll=1
 LinkageInformationPresent=0
 COFFileTimeStamp=-1
-Build=76
+Build=131
 [DefinedSymbols]
 Count=0
 [StartUp]
@@ -332,10 +332,10 @@ L13=Enhanced function parameters passing: Yes
 L14=Automatic register allocation: Yes
 L15=Smart register allocation: Yes
 L16=
-L17=Build: 75
-L18=11989 line(s) compiled
+L17=Build: 131
+L18=12057 line(s) compiled
 L19=No errors
-L20=1 warning(s)
+L20=5 warning(s)
 L21=
 L22=Bit variables size: 0 byte(s)
 L23=
@@ -353,51 +353,38 @@ L34=Heap size: 0 byte(s)
 L35=
 Lines=38
 L36=EEPROM usage: 0 byte(s), 0,0% of EEPROM
-L37=Program size: 1591 words (3182 bytes), 19,4% of FLASH
+L37=Program size: 1588 words (3176 bytes), 19,4% of FLASH
 L38=72 words (144 bytes), 4,3% reduced by Code Compression
 [BuildInfoAssembler]
 Lines=12
 L1=AVRASM: AVR macro assembler 2.1.30 (build 592 Nov  7 2008 12:38:17)
 L2=Copyright (C) 1995-2008 ATMEL Corporation
 L3=
-L4=E:\Kuliah\Semester 5\Sistem Embedded 1\ATmega External ADC\Debug\List\main.asm(3038): No EEPROM data, deleting E:\Kuliah\Semester 5\Sistem Embedded 1\ATmega External ADC\Debug\Exe\main.eep
+L4=E:\Kuliah\Semester 5\Sistem Embedded 1\ATmega External ADC\Debug\List\main.asm(3058): No EEPROM data, deleting E:\Kuliah\Semester 5\Sistem Embedded 1\ATmega External ADC\Debug\Exe\main.eep
 L5=
 L6=ATmega162 memory use summary [bytes]:
 L7=Segment   Begin    End      Code   Data   Used    Size   Use%
 L8=---------------------------------------------------------------
-L9=[.cseg] 0x000000 0x000c6e   3108     74   3182   16384  19.4%
+L9=[.cseg] 0x000000 0x000c68   3126     50   3176   16384  19.4%
 L10=[.dseg] 0x000100 0x000234      0     52     52    1024   5.1%
 L11=[.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 L12=
-[HeadersList]
-Files=1
-F1=E:\Kuliah\Semester 5\Sistem Embedded 1\ATmega External ADC\main.c
-[Header1]
-Files=8
-F1=C:\cvavr\inc\mega162.h
-F2=C:\cvavr\inc\mega162_bits.h
-F3=C:\cvavr\inc\stdio.h
-F4=C:\cvavr\inc\io.h
-F5=C:\cvavr\inc\stdarg.h
-F6=C:\cvavr\inc\stdlib.h
-F7=C:\cvavr\inc\delay.h
-F8=C:\cvavr\inc\string.h
 [Bookmarks0]
 Row=0
 Column=0
 ScrollPosX=0
 ScrollPosY=0
-TimeStamp=1333548207
+TimeStamp=1334404907
 [BookmarksFoldedCode]
 Files=2
 F1=main.c
 F2=C:\cvavr\inc\stdio.h
 [Bookmarks1]
-TimeStamp=1333548206
-Row=139
-Column=23
+TimeStamp=1334404567
+Row=146
+Column=104
 ScrollPosX=0
-ScrollPosY=125
+ScrollPosY=139
 BK0=-1
 BK1=-1
 BK2=-1
@@ -408,8 +395,6 @@ BK6=-1
 BK7=-1
 BK8=-1
 BK9=-1
-[FoldedCode1]
-Blocks=0
 [Bookmarks2]
 TimeStamp=1333545432
 Row=25
@@ -426,5 +411,21 @@ BK6=-1
 BK7=-1
 BK8=-1
 BK9=-1
+[FoldedCode1]
+Blocks=0
 [FoldedCode2]
 Blocks=0
+[HeadersList]
+Files=1
+F1=E:\Kuliah\Semester 5\Sistem Embedded 1\ATmega External ADC\main.c
+[Header1]
+Files=9
+F1=C:\cvavr\inc\mega162.h
+F2=C:\cvavr\inc\mega162_bits.h
+F3=C:\cvavr\inc\stdio.h
+F4=C:\cvavr\inc\io.h
+F5=C:\cvavr\inc\stdarg.h
+F6=C:\cvavr\inc\stdlib.h
+F7=C:\cvavr\inc\delay.h
+F8=C:\cvavr\inc\string.h
+F9=C:\cvavr\inc\math.h
